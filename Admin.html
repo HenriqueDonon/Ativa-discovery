@@ -1155,13 +1155,11 @@ else carregarComExemplos();
       for (var i = 1; i <= 18; i++) {
         var a = d.respostas[i]; if (!a) continue;
         respostasHtml += '<div class="ans ' + (bdCls[a.level]||'') + '">' +
-          '<div class="ans-num">' + i + '.</div>' +
-          '<div class="ans-body">' +
-            '<div class="ans-q">' + (domNames[i]||'') + '</div>' +
-            '<div class="ans-a">' + (icons[a.level]||'') + ' ' + a.text +
-              ' <span class="tag ' + (tagCls[a.level]||'') + '">' + (tagTxt[a.level]||'') + '</span>' +
-            '</div>' +
+          '<div class="ans-num-domain">Domínio ' + i + ' · ' + (domNames[i]||'') + '</div>' +
+          '<div class="ans-q">' + (icons[a.level]||'') + ' ' +
+            '<span class="tag ' + (tagCls[a.level]||'') + '">' + (tagTxt[a.level]||'') + '</span>' +
           '</div>' +
+          '<div class="ans-a">' + a.text + '</div>' +
         '</div>';
       }
     }
@@ -1281,13 +1279,13 @@ body { font-family:'Segoe UI',Arial,sans-serif; color:#1a202c; background:#fff; 
 .field-value { font-size:0.88rem; font-weight:700; color:#1a202c; }
 
 /* Respostas */
-.ans { border-radius:7px; padding:10px 13px; margin-bottom:6px; display:flex; gap:10px; page-break-inside:avoid; }
-.ans-low  { background:#f0fff4; border-left:3px solid #38a169; }
-.ans-mid  { background:#fffbeb; border-left:3px solid #d97706; }
-.ans-high { background:#fff5f5; border-left:3px solid #e53e3e; }
-.ans-num  { font-size:0.6rem; color:#718096; font-weight:700; min-width:18px; margin-top:2px; }
-.ans-q    { font-size:0.7rem; color:#718096; margin-bottom:3px; }
-.ans-a    { font-size:0.82rem; font-weight:600; color:#1a202c; }
+.ans { border-radius:8px; padding:13px 16px; margin-bottom:8px; page-break-inside:avoid; }
+.ans-low  { background:#f0fff4; border-left:4px solid #38a169; }
+.ans-mid  { background:#fffbeb; border-left:4px solid #d97706; }
+.ans-high { background:#fff5f5; border-left:4px solid #e53e3e; }
+.ans-num-domain { font-size:0.62rem; color:#718096; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.06em; }
+.ans-q    { font-size:0.82rem; font-weight:800; color:#1a202c; margin-bottom:5px; display:flex; align-items:center; gap:6px; }
+.ans-a    { font-size:0.76rem; color:#4a5568; line-height:1.5; }
 .tag      { display:inline-block; font-size:0.56rem; font-weight:700; text-transform:uppercase; padding:2px 6px; border-radius:8px; margin-left:6px; vertical-align:middle; }
 .tag-low  { background:#c6f6d5; color:#276749; }
 .tag-mid  { background:#fef3c7; color:#92400e; }
