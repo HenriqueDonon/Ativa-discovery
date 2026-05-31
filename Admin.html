@@ -1112,7 +1112,7 @@ else carregarComExemplos();
 
   function imprimirRelatorio() {
     var conteudo = document.getElementById('rp-conteudo').innerHTML;
-    var win = window.open('', '_blank', 'width=900,height=700');
+    var win = window.open('about:blank', '_blank', 'width=900,height=700,toolbar=0,scrollbars=1,status=0,menubar=0,location=0');
     win.document.write(`<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -1120,7 +1120,15 @@ else carregarComExemplos();
 <title>Relatório de Maturidade · Ativa Security</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-  @page { margin: 10mm; size: A4; }
+  @page {
+    margin: 10mm;
+    size: A4;
+  }
+  /* Remove URL e cabeçalho nativos do navegador */
+  @page :first { margin-top: 10mm; }
+  html { -webkit-print-color-adjust: exact; }
+  head { display: none; }
+  html { height: 100%; }
   body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a202c; background: #fff; }
 
   .rp-print-wrap {
