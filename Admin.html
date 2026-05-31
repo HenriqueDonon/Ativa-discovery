@@ -767,6 +767,258 @@ function abrirRelatorio() {
       recsHtml +
     '</div>' +
 
+    // ── 1. RADAR DE MATURIDADE ──
+    (function() {
+      var dominios = ['HW','SW','Patches','Antimalware','NGFW','IAM','MFA','Backup','SIEM','VPN','Cripto','Segmentação','Treinamento','Terceiros','IR','Pentest','Compliance','DLP'];
+      var scores = [];
+      if (d.respostas) {
+        for (var i = 1; i <= 18; i++) {
+          var a = d.respostas[i];
+          scores.push(a ? (a.level==='low'?100:a.level==='mid'?50:0) : 0);
+        }
+      }
+      var N = dominios.length;
+      var cx = 260, cy = 260, R = 155;
+      var toRad = function(deg){return deg * Math.PI / 180;};
+      var getXY = function(idx, val) {
+        var angle = toRad(-90 + (360 / N) * idx);
+        var r = R * val / 100;
+        return {x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle)};
+      };
+      // Anéis de referência
+      var rings = '';
+      [20,40,60,80,100].forEach(function(pct) {
+        var pts = [];
+        for (var i = 0; i < N; i++) {
+          var p = getXY(i, pct);
+          pts.push(p.x + ',' + p.y);
+        }
+        rings += '<polygon points="' + pts.join(' ') + '" fill="none" stroke="#c7d6eb" stroke-width="0.8" opacity="0.7"/>';
+      });
+      // Linhas dos eixos
+      var axes = '';
+      for (var i = 0; i < N; i++) {
+        var p = getXY(i, 100);
+        axes += '<line x1="' + cx + '" y1="' + cy + '" x2="' + p.x + '" y2="' + p.y + '" stroke="#c7d6eb" stroke-width="0.8" opacity="0.6"/>';
+      }
+      // Polígono de dados
+      var datapts = [];
+      for (var i = 0; i < N; i++) {
+        var p = getXY(i, scores[i] || 0);
+        datapts.push(p.x + ',' + p.y);
+      }
+      var polygon = '<polygon points="' + datapts.join(' ') + '" fill="rgba(59,130,246,0.18)" stroke="#3b82f6" stroke-width="2"/>';
+      // Pontos nos vértices
+      var dots = '';
+      for (var i = 0; i < N; i++) {
+        var s = scores[i] || 0;
+        var p = getXY(i, s);
+        var col = s>=80?'#22c55e':s>=40?'#f59e0b':'#ef4444';
+        dots += '<circle cx="' + p.x + '" cy="' + p.y + '" r="4" fill="' + col + '" stroke="#fff" stroke-width="1.5"/>';
+      }
+      // Labels com offset extra para evitar corte
+      var labels = '';
+      for (var i = 0; i < N; i++) {
+        var angle = toRad(-90 + (360 / N) * i);
+        var labelR = R + 38;
+        var lx = cx + labelR * Math.cos(angle);
+        var ly = cy + labelR * Math.sin(angle);
+        var anchor = 'middle';
+        if (lx < cx - 12) anchor = 'end';
+        else if (lx > cx + 12) anchor = 'start';
+        labels += '<text x="' + lx + '" y="' + (ly + 4) + '" text-anchor="' + anchor + '" font-size="9.5" fill="#001942" font-family="Arial,sans-serif" font-weight="600">' + dominios[i] + '</text>';
+      }
+      // Percentuais nos anéis
+      var ringLabels = '';
+      [20,40,60,80,100].forEach(function(pct) {
+        var p = getXY(0, pct);
+        ringLabels += '<text x="' + (p.x+3) + '" y="' + (p.y-3) + '" font-size="7" fill="#7c8fa6" font-family="Arial,sans-serif">' + pct + '%</text>';
+      });
+
+      var svg = '<svg viewBox="0 0 520 520" width="100%" style="max-width:520px;display:block;margin:0 auto;">' +
+        rings + axes + polygon + dots + labels + ringLabels +
+      '</svg>';
+
+      var legenda = '<div style="display:flex;justify-content:center;gap:20px;margin-top:12px;flex-wrap:wrap;">' +
+        '<div style="display:flex;align-items:center;gap:6px;">' +
+          '<div style="width:12px;height:12px;border-radius:50%;background:#22c55e;flex-shrink:0;"></div>' +
+          '<span style="font-size:0.72rem;color:#001942;font-weight:600;">Adequado (100%)</span>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:6px;">' +
+          '<div style="width:12px;height:12px;border-radius:50%;background:#f59e0b;flex-shrink:0;"></div>' +
+          '<span style="font-size:0.72rem;color:#001942;font-weight:600;">Atenção (50%)</span>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:6px;">' +
+          '<div style="width:12px;height:12px;border-radius:50%;background:#ef4444;flex-shrink:0;"></div>' +
+          '<span style="font-size:0.72rem;color:#001942;font-weight:600;">Crítico (0%)</span>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:6px;">' +
+          '<div style="width:28px;height:3px;background:#3b82f6;border-radius:2px;flex-shrink:0;"></div>' +
+          '<span style="font-size:0.72rem;color:#001942;font-weight:600;">Perfil da empresa</span>' +
+        '</div>' +
+      '</div>';
+
+      return '<div class="rp-section">' +
+        '<div class="rp-section-title">Radar de Maturidade por Domínio</div>' +
+        '<div style="background:#f0f4fa;border:1px solid #b8ccea;border-radius:8px;padding:16px 20px;">' + svg + legenda + '</div>' +
+      '</div>';
+    })() +
+
+    // ── 2. ESTIMATIVA DE RISCO FINANCEIRO ──
+    (function() {
+      var risco, cor, valor;
+      if (d.score >= 80) { risco='Baixo'; cor='#16a34a'; valor='Exposição estimada reduzida. Controles sólidos minimizam impacto financeiro de incidentes.'; }
+      else if (d.score >= 55) { risco='Moderado'; cor='#d97706'; valor='Exposição moderada a incidentes cibernéticos. Estimativa de impacto financeiro entre R$ 50k e R$ 500k em caso de violação.'; }
+      else if (d.score >= 30) { risco='Alto'; cor='#dc2626'; valor='Exposição significativa. Estimativa de impacto financeiro acima de R$ 500k incluindo multas LGPD, paralisação operacional e custos de resposta.'; }
+      else { risco='Crítico'; cor='#7f1d1d'; valor='Exposição crítica. Sem controles básicos, qualquer incidente pode resultar em impactos irreversíveis: multas, processos, paralisação total e danos reputacionais severos.'; }
+      return '<div class="rp-section">' +
+        '<div class="rp-section-title">Estimativa de Risco Financeiro</div>' +
+        '<div style="background:#fff8f0;border:1px solid #fed7aa;border-left:4px solid ' + cor + ';border-radius:8px;padding:16px 20px;display:flex;align-items:flex-start;gap:14px;">' +
+          '<div style="font-size:2rem;flex-shrink:0;">⚠️</div>' +
+          '<div>' +
+            '<div style="font-size:0.85rem;font-weight:800;color:' + cor + ';margin-bottom:6px;">Nível de Risco: ' + risco + '</div>' +
+            '<div style="font-size:0.78rem;color:#4a5568;line-height:1.6;">' + valor + '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    })() +
+
+    // ── 3. TOP 3 PRIORIDADES ──
+    (function() {
+      var prioridades = [];
+      if (d.respostas) {
+        var keys = Object.keys(d.respostas).sort(function(a,b){return parseInt(a)-parseInt(b);});
+        keys.forEach(function(k) {
+          var a = d.respostas[k];
+          if (a.level === 'high' && prioridades.length < 3) {
+            var idx = parseInt(k);
+            var rec = recomendacoes.high.find(function(r){return r[0]===idx;});
+            if (rec) prioridades.push({titulo: rec[1], desc: rec[2], icon:'🔴'});
+          }
+        });
+        if (prioridades.length < 3) {
+          keys.forEach(function(k) {
+            var a = d.respostas[k];
+            if (a.level === 'mid' && prioridades.length < 3) {
+              var idx = parseInt(k);
+              var rec2 = recomendacoes.mid.find(function(r){return r[0]===idx;});
+              if (rec2) prioridades.push({titulo: rec2[1], desc: rec2[2], icon:'🟡'});
+            }
+          });
+        }
+      }
+      if (!prioridades.length) return '';
+      var items = prioridades.map(function(p, i) {
+        return '<div style="display:flex;gap:12px;padding:12px;background:#fff;border:1px solid #dbeafe;border-radius:8px;margin-bottom:8px;">' +
+          '<div style="font-size:1.4rem;flex-shrink:0;line-height:1;">' + (i+1) + '</div>' +
+          '<div>' +
+            '<div style="font-size:0.8rem;font-weight:700;color:#001942;margin-bottom:3px;">' + p.icon + ' ' + p.titulo + '</div>' +
+            '<div style="font-size:0.75rem;color:#4a5568;line-height:1.5;">' + p.desc + '</div>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+      return '<div class="rp-section">' +
+        '<div class="rp-section-title">Top 3 Prioridades de Ação Imediata</div>' +
+        items +
+      '</div>';
+    })() +
+
+    // ── 4. COMPARATIVO COM MERCADO ──
+    (function() {
+      var mediaMercado = 58;
+      var diff = d.score - mediaMercado;
+      var msg, cor;
+      if (diff >= 10) { msg='Acima da média do mercado (+' + diff + ' pts). Boas práticas identificadas!'; cor='#16a34a'; }
+      else if (diff >= 0) { msg='Alinhado à média do mercado (+' + diff + ' pts). Há espaço para melhorias.'; cor='#d97706'; }
+      else { msg='Abaixo da média do mercado (' + diff + ' pts). Atenção redobrada recomendada.'; cor='#dc2626'; }
+      var pct = Math.min(100, Math.max(0, d.score));
+      var pctMercado = mediaMercado;
+      return '<div class="rp-section">' +
+        '<div class="rp-section-title">Comparativo com o Mercado</div>' +
+        '<div style="background:#f0f4fa;border:1px solid #b8ccea;border-radius:8px;padding:16px 20px;">' +
+          '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">' +
+            '<div style="font-size:0.75rem;color:#001942;font-weight:700;width:120px;">Esta empresa</div>' +
+            '<div style="flex:1;height:14px;background:#dbeafe;border-radius:6px;overflow:hidden;">' +
+              '<div style="height:100%;width:' + pct + '%;background:#3b82f6;border-radius:6px;"></div>' +
+            '</div>' +
+            '<div style="font-size:0.8rem;font-weight:800;color:#001942;width:40px;text-align:right;">' + pct + '</div>' +
+          '</div>' +
+          '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">' +
+            '<div style="font-size:0.75rem;color:#718096;width:120px;">Média mercado</div>' +
+            '<div style="flex:1;height:14px;background:#dbeafe;border-radius:6px;overflow:hidden;">' +
+              '<div style="height:100%;width:' + pctMercado + '%;background:#94a3b8;border-radius:6px;"></div>' +
+            '</div>' +
+            '<div style="font-size:0.8rem;font-weight:700;color:#718096;width:40px;text-align:right;">' + pctMercado + '</div>' +
+          '</div>' +
+          '<div style="font-size:0.75rem;font-weight:700;color:' + cor + ';">' + msg + '</div>' +
+        '</div>' +
+      '</div>';
+    })() +
+
+    // ── 5. PRÓXIMOS PASSOS COMERCIAIS ──
+    '<div class="rp-section">' +
+      '<div class="rp-section-title">Próximos Passos com a Ativa Security</div>' +
+      '<div style="background:linear-gradient(135deg,#001942,#002d6b);border-radius:10px;padding:20px 24px;color:#fff;">' +
+        '<div style="font-size:0.85rem;font-weight:800;margin-bottom:12px;">🚀 Como a Ativa Security pode ajudar:</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">' +
+          '<div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:12px;">' +
+            '<div style="font-size:0.75rem;font-weight:700;color:#93c5fd;margin-bottom:4px;">🔍 Assessment Completo</div>' +
+            '<div style="font-size:0.7rem;color:rgba(255,255,255,0.8);line-height:1.4;">Avaliação técnica aprofundada de todo o ambiente, com relatório executivo e roadmap de segurança.</div>' +
+          '</div>' +
+          '<div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:12px;">' +
+            '<div style="font-size:0.75rem;font-weight:700;color:#93c5fd;margin-bottom:4px;">🛡️ Implementação de Controles</div>' +
+            '<div style="font-size:0.7rem;color:rgba(255,255,255,0.8);line-height:1.4;">Implementação e configuração das soluções prioritárias identificadas neste diagnóstico.</div>' +
+          '</div>' +
+          '<div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:12px;">' +
+            '<div style="font-size:0.75rem;font-weight:700;color:#93c5fd;margin-bottom:4px;">📊 Monitoramento Contínuo</div>' +
+            '<div style="font-size:0.7rem;color:rgba(255,255,255,0.8);line-height:1.4;">SOC gerenciado com monitoramento 24/7, detecção e resposta a incidentes em tempo real.</div>' +
+          '</div>' +
+          '<div style="background:rgba(255,255,255,0.08);border-radius:8px;padding:12px;">' +
+            '<div style="font-size:0.75rem;font-weight:700;color:#93c5fd;margin-bottom:4px;">📋 Adequação LGPD & Compliance</div>' +
+            '<div style="font-size:0.7rem;color:rgba(255,255,255,0.8);line-height:1.4;">Programa estruturado de adequação às regulamentações vigentes com acompanhamento jurídico especializado.</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="font-size:0.78rem;color:#fde68a;font-weight:700;text-align:center;">📞 Agende agora uma reunião com nosso time de especialistas</div>' +
+      '</div>' +
+    '</div>' +
+
+    // ── 6. NÍVEL DE CONFORMIDADE LGPD ──
+    (function() {
+      var lgpdScore = 0, lgpdTotal = 0;
+      var lgpdDomains = [6, 7, 11, 14, 17, 18]; // IAM, MFA, Criptografia, Terceiros, Compliance, DLP
+      if (d.respostas) {
+        lgpdDomains.forEach(function(idx) {
+          lgpdTotal++;
+          var a = d.respostas[idx];
+          if (a) lgpdScore += (a.level==='low'?100:a.level==='mid'?50:0);
+        });
+      }
+      var lgpdPct = lgpdTotal > 0 ? Math.round(lgpdScore / lgpdTotal) : 0;
+      var lgpdNivel, lgpdCor, lgpdMsg;
+      if (lgpdPct >= 75) { lgpdNivel='Adequado'; lgpdCor='#16a34a'; lgpdMsg='Organização demonstra controles alinhados aos requisitos da LGPD.'; }
+      else if (lgpdPct >= 40) { lgpdNivel='Parcialmente Adequado'; lgpdCor='#d97706'; lgpdMsg='Existem lacunas relevantes que podem gerar exposição regulatória e multas.'; }
+      else { lgpdNivel='Inadequado'; lgpdCor='#dc2626'; lgpdMsg='Alto risco de não conformidade com a LGPD. Ação imediata recomendada para evitar sanções.'; }
+      return '<div class="rp-section">' +
+        '<div class="rp-section-title">Nível de Conformidade LGPD</div>' +
+        '<div style="background:#f0f4fa;border:1px solid #b8ccea;border-radius:8px;padding:16px 20px;">' +
+          '<div style="display:flex;align-items:center;gap:16px;margin-bottom:12px;">' +
+            '<div style="text-align:center;flex-shrink:0;">' +
+              '<div style="font-size:2.2rem;font-weight:900;color:' + lgpdCor + ';">' + lgpdPct + '<span style="font-size:1rem;opacity:0.6">%</span></div>' +
+              '<div style="font-size:0.65rem;color:#718096;font-weight:700;text-transform:uppercase;">Conformidade</div>' +
+            '</div>' +
+            '<div style="flex:1;">' +
+              '<div style="font-size:0.82rem;font-weight:800;color:' + lgpdCor + ';margin-bottom:6px;">' + lgpdNivel + '</div>' +
+              '<div style="height:10px;background:#dbeafe;border-radius:5px;overflow:hidden;margin-bottom:8px;">' +
+                '<div style="height:100%;width:' + lgpdPct + '%;background:' + lgpdCor + ';border-radius:5px;"></div>' +
+              '</div>' +
+              '<div style="font-size:0.75rem;color:#4a5568;line-height:1.5;">' + lgpdMsg + '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    })() +
+
+    // ── 7. FRAMEWORKS + RODAPÉ DE CONTATO ──
     '<div class="rp-section">' +
       '<div class="rp-section-title">Baseado nos Frameworks</div>' +
       '<div style="background:#eef3fb;border:1px solid #b8ccea;border-left:3px solid #001942;border-radius:8px;padding:16px 20px;">' +
@@ -781,8 +1033,8 @@ function abrirRelatorio() {
     '</div>' +
 
     '<div class="rp-footer">' +
-      '<p>Ativa Security · Relatório gerado automaticamente pelo sistema de Discovery de Cibersegurança</p>' +
-      '<p>Documento confidencial — uso exclusivo do cliente</p>' +
+      '<p>Ativa Security · Discovery Técnico de Cibersegurança · Documento Confidencial</p>' +
+      '<p>contato@ativasecurity.com.br · www.ativasecurity.com.br</p>' +
     '</div>';
 
   document.getElementById("rp-conteudo").innerHTML = html;
