@@ -1057,6 +1057,22 @@
     document.body.style.overflow = '';
   }
 
+  function abrirJanelaPDF() {
+    var conteudo = document.getElementById('rp-pagina').innerHTML;
+    var win = window.open('about:blank','_blank','width=920,height=750,toolbar=0,scrollbars=1,status=0,menubar=0,location=0');
+    win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Relatorio Ativa Security</title><style>' +
+      '* {box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}' +
+      '@page {margin:12mm 10mm;size:A4}' +
+      'body {font-family:Segoe UI,Arial,sans-serif;background:#fff}' +
+      '.pbar {text-align:right;padding:10px 16px 16px;max-width:820px;margin:0 auto}' +
+      '.pbtn {background:#001942;color:#fff;border:none;padding:9px 22px;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer}' +
+      '@media print {.pbar {display:none!important} button {display:none!important}}' +
+      '</style></head><body>' +
+      '<div class="pbar"><button class="pbtn" onclick="window.print()">&#128424; Salvar PDF</button></div>' +
+      '<div>' + conteudo + '</div>' +
+      '</body></html>');
+    win.document.close();
+  }
 
 </script>
 
@@ -1155,23 +1171,6 @@
     </div><!-- /z-index wrapper -->
   </div><!-- /rp-pagina -->
 </div><!-- /relatorio-print -->
-
-  function abrirJanelaPDF() {
-    var conteudo = document.getElementById('rp-pagina').innerHTML;
-    var win = window.open('about:blank','_blank','width=920,height=750,toolbar=0,scrollbars=1,status=0,menubar=0,location=0');
-    win.document.write('<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Relatório · Ativa Security</title><style>' +
-      '* {box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}' +
-      '@page {margin:12mm 10mm;size:A4}' +
-      'body {font-family:Segoe UI,Arial,sans-serif;background:#fff}' +
-      '.pbar {text-align:right;padding:10px 16px 16px;max-width:820px;margin:0 auto}' +
-      '.pbtn {background:#001942;color:#fff;border:none;padding:9px 22px;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer}' +
-      '@media print {.pbar {display:none!important} button {display:none!important}}' +
-      '</style></head><body>' +
-      '<div class="pbar"><button class="pbtn" onclick="window.print()">&#128424; Salvar PDF</button></div>' +
-      '<div>' + conteudo + '</div>' +
-      '</body></html>');
-    win.document.close();
-  }
 
 </script>
 
