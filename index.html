@@ -276,7 +276,7 @@
         </div>
         <div class="field" id="f-telefone">
           <label>Telefone / WhatsApp <span class="required-star">*</span></label>
-          <input type="tel" id="inp-telefone" placeholder="Ex: (11) 99999-9999" autocomplete="tel">
+          <input type="tel" id="inp-telefone" placeholder="Ex: (11) 99999-9999" autocomplete="tel" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9()\-\s+]/g,'')">
           <span class="field-error">Campo obrigatório</span>
         </div>
       </div>
