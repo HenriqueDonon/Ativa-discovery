@@ -1068,7 +1068,7 @@ function abrirRelatorio() {
 
     '<div class="rp-footer">' +
       '<p>Ativa Security · Discovery Técnico de Cibersegurança · Documento Confidencial</p>' +
-      '<p>contato@ativasecurity.com.br · www.ativasecurity.com.br</p>' +
+      '<p>(11) 2289-0755 / 2082-2080 · comercial@ativait.com.br · ativait.com.br</p>' +
     '</div>';
 
   document.getElementById("rp-conteudo").innerHTML = html;
@@ -1269,7 +1269,10 @@ else carregarComExemplos();
       '.r-li {display:flex;align-items:center;gap:5px;font-size:.66rem;color:#001942;font-weight:600}',
       '.r-dot {width:10px;height:10px;border-radius:50%;flex-shrink:0}',
       '.r-line {width:24px;height:3px;border-radius:2px;flex-shrink:0}',
-      '.ftr {margin-top:22px;padding-top:13px;border-top:2px solid #001942;display:flex;justify-content:space-between;font-size:.64rem;color:#718096}',
+      '.cta-box {margin-top:22px;background:linear-gradient(135deg,#001942,#002d6b);border-radius:12px;padding:22px 28px;text-align:center;page-break-inside:avoid}',
+      '.cta-btn {display:inline-block;background:#fff;color:#001942;text-decoration:none;font-size:.92rem;font-weight:800;padding:13px 28px;border-radius:8px;margin-bottom:10px;letter-spacing:.03em}',
+      '.cta-sub {font-size:.72rem;color:rgba(255,255,255,.8);line-height:1.5}',
+      '.ftr {margin-top:18px;padding-top:13px;border-top:2px solid #001942;display:flex;justify-content:space-between;font-size:.64rem;color:#718096}',
       '.pbar {text-align:right;padding:10px 0 16px;max-width:760px;margin:0 auto}',
       '.pbtn {background:#001942;color:#fff;border:none;padding:9px 22px;border-radius:8px;font-size:.84rem;font-weight:700;cursor:pointer}',
       '@media print {.pbar {display:none!important}}'
@@ -1291,7 +1294,8 @@ else carregarComExemplos();
         '<div class="sec"><div class="sec-t">Pr&oacute;ximos Passos com a Ativa Security</div><div class="steps"><div class="steps-t">&#128640; Como a Ativa Security pode ajudar:</div><div class="steps-g"><div class="step-c"><div class="step-ct">&#128269; Assessment Completo</div><div class="step-cd">Avalia&ccedil;&atilde;o t&eacute;cnica aprofundada com relat&oacute;rio executivo e roadmap de seguran&ccedil;a.</div></div><div class="step-c"><div class="step-ct">&#128737;&#65039; Implementa&ccedil;&atilde;o de Controles</div><div class="step-cd">Implementa&ccedil;&atilde;o das solu&ccedil;&otilde;es priorit&aacute;rias identificadas neste diagn&oacute;stico.</div></div><div class="step-c"><div class="step-ct">&#128202; Monitoramento Cont&iacute;nuo</div><div class="step-cd">SOC gerenciado com monitoramento 24/7 e resposta a incidentes em tempo real.</div></div><div class="step-c"><div class="step-ct">&#128203; Adequa&ccedil;&atilde;o LGPD</div><div class="step-cd">Programa estruturado de conformidade com acompanhamento jur&iacute;dico especializado.</div></div></div><div class="steps-cta">&#128222; Agende agora uma reuni&atilde;o com nosso time de especialistas</div></div></div>' +
         '<div class="sec"><div class="sec-t">N&iacute;vel de Conformidade LGPD</div><div class="lgpd"><div class="lgpd-s"><div class="lgpd-n" style="color:'+lgpdC+'">'+lgpdPct+'<span style="font-size:.9rem;opacity:.6">%</span></div><div class="lgpd-l">Conformidade</div></div><div style="flex:1"><div class="lgpd-ni" style="color:'+lgpdC+'">'+lgpdN+'</div><div class="lgpd-bw"><div class="lgpd-bf" style="width:'+lgpdPct+'%;background:'+lgpdC+'"></div></div><div class="lgpd-m">'+lgpdM+'</div></div></div></div>' +
         '<div class="sec"><div class="sec-t">Baseado nos Frameworks</div><div class="fw"><div class="fw-badges"><span class="fw-b">CIS Controls v8</span><span class="fw-b">NIST CSF 2.0</span><span class="fw-b">ISO/IEC 27001</span><span class="fw-b">LGPD</span></div><div class="fw-t">Este relat&oacute;rio foi gerado com base nos principais frameworks globais de ciberseguran&ccedil;a e privacidade de dados.</div></div></div>' +
-        '<div class="ftr"><span>Ativa Security &middot; Discovery T&eacute;cnico de Ciberseguran&ccedil;a &middot; Documento Confidencial</span><span>contato@ativasecurity.com.br</span></div>' +
+        '<div class="cta-box"><a href="https://ativait.com.br/contato/" target="_blank" class="cta-btn">&#128073; Quero meu Relat&oacute;rio Aprofundado</a><p class="cta-sub">Solicite um Assessment completo e receba um diagn&oacute;stico detalhado do seu ambiente de seguran&ccedil;a.</p></div>' +
+        '<div class="ftr"><span>Ativa Security &middot; Discovery T&eacute;cnico de Ciberseguran&ccedil;a &middot; Documento Confidencial</span><span>(11) 2289-0755 / 2082-2080 &middot; comercial@ativait.com.br</span></div>' +
       '</div></body></html>';
 
     var win = window.open('about:blank','_blank','width=920,height=750,toolbar=0,scrollbars=1,status=0,menubar=0,location=0');
